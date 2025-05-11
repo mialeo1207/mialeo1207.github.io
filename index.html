@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ミアの水彩日記</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>ミアの水彩日記</header>
+    <nav>
+        <button onclick="showTab('top')">トップ</button>
+        <button onclick="showTab('profile')">プロフィール</button>
+        <button onclick="showTab('diary')">日記一覧</button>
+        <button onclick="showTab('contact')">お問い合わせ</button>
+    </nav>
+
+    <section id="top" class="active">
+        <h2>最新の日記</h2>
+        <img src="https://via.placeholder.com/600x300?text=最新の絵日記" class="diary-img" alt="最新の絵日記">
+        <p>今日はとても気持ちいい風が吹いていました…</p>
+    </section>
+
+    <section id="profile">
+        <h2>プロフィール</h2>
+        <p>こんにちは、ミアです。絵を描くのが好きで、日々の記録を水彩で綴っています。</p>
+    </section>
+
+    <section id="diary">
+        <h2>日記一覧</h2>
+        <div id="diary-container"></div>
+    </section>
+
+    <section id="contact">
+        <h2>お問い合わせ</h2>
+        <form>
+            <label for="name">お名前：</label>
+            <input id="name" type="text" required>
+          
+            <label for="email">メールアドレス：</label>
+            <input id="email" type="email" required>
+          
+            <label for="message">メッセージ：</label>
+            <textarea id="message" rows="5" required></textarea>
+          
+            <button type="submit">送信</button>
+          </form>          
+    </section>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+		fetch('diary.json')
+		  .then(response => response.json())
+		  .then(diaryData => {
+		    diaryData.sort((a, b) => new Date(b.date) - new Date(a.date));
+		    const container = document.getElementById("diary-container");
+		    diaryData.forEach(entry => {
+		      const div = document.createElement("div");
+		      div.className = "entry";
+		      div.innerHTML = `
+		        <div class="entry-date">${entry.date}</div>
+		        <div>${entry.comment}</div>
+		        <img src="${entry.image}" alt="日記画像">
+		      `;
+		      container.appendChild(div);
+		    });
+		  });
+    </script>
+</body>
+</html>
