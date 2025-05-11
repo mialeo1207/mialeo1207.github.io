@@ -32,7 +32,7 @@
 
     <section id="contact">
         <h2>お問い合わせ</h2>
-	<form action="https://formspree.io/f/xldbwzb" method="POST" accept-charset="UTF-8">
+	<form action="https://formspree.io/f/xldbwzb" method="POST" accept-charset="UTF-8" onsubmit="return redirectAfterSubmit(this)">
 	  <label for="name">お名前：</label>
 	  <input id="name" type="text" name="name" required>
 	
@@ -68,6 +68,16 @@
 		      container.appendChild(div);
 		    });
 		  });
+
+	  function redirectAfterSubmit(form) {
+	    // 少し遅らせて送信後にリダイレクト
+	    setTimeout(() => {
+	      window.location.href = "thanks.html";
+	    }, 100); // 0.1秒で十分（送信処理が先に走る）
+	
+	    return true; // 本来の送信処理も実行
+	  }
+	    
     </script>
 </body>
 </html>
