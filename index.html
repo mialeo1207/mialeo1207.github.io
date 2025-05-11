@@ -14,11 +14,11 @@
         <button onclick="showTab('contact')">お問い合わせ</button>
     </nav>
 
-    <section id="top" class="active">
-        <h2>最新の日記</h2>
-        <img src="https://via.placeholder.com/600x300?text=最新の絵日記" class="diary-img" alt="最新の絵日記">
-        <p>今日はとても気持ちいい風が吹いていました…</p>
-    </section>
+	<section id="top" class="active">
+	  <h2>最新の日記（<span id="latest-date"></span>）</h2>
+	  <img id="latest-image" alt="最新の絵日記">
+	  <p id="latest-comment"></p>
+	</section>
 
     <section id="profile">
         <h2>プロフィール</h2>
@@ -47,6 +47,20 @@
     </section>
 
     <script>
+	  fetch('diary.json')
+	    .then(response => response.json())
+	    .then(diaryData => {
+	      diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); // 新しい順に並べ替え
+	
+	      const latest = diaryData[0]; // 最新の日記を取得
+	
+	      // トップページの要素に反映
+	      document.querySelector("#latest-date").textContent = latest.date;
+	      document.querySelector("#latest-comment").textContent = latest.comment;
+	      document.querySelector("#latest-image").src = latest.image;
+	    });
+
+	    
         function showTab(tabId) {
             document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
