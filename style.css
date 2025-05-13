@@ -44,6 +44,7 @@ body {
   
   /* タブ切り替えフェード */
   section {
+      text-aline: center;
     display: none;
     animation: fade 0.5s ease-in-out;
   }
