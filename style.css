@@ -2,7 +2,8 @@
 
 body {
     margin: 0;
-    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+/*    font-family: "Hiragino Kaku Gothic ProN", sans-serif;*/
+    font-family: "Kaisei Tokumin", serif;
     background: linear-gradient(#f0f8ff, #ffffff);
     color: #333;
   }
