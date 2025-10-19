@@ -50,51 +50,121 @@
     </section>
 
     <script>
-	  fetch('diary.json')
-	    .then(response => response.json())
-	    .then(diaryData => {
-	      diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); // 新しい順に並べ替え
-	
-	      const latest = diaryData[0]; // 最新の日記を取得
-	
-	      // トップページの要素に反映
-	      document.querySelector("#latest-date").textContent = latest.date;
-	      document.querySelector("#latest-comment").textContent = latest.comment;
-	      document.querySelector("#latest-image").src = latest.image;
-	    });
+        const latestDateEl = document.querySelector("#latest-date");
+        const latestCommentEl = document.querySelector("#latest-comment");
+        const latestImageEl = document.querySelector("#latest-image");
+        const topSection = document.getElementById("top");
+        const diarySection = document.getElementById("diary");
+        const diaryContainer = document.getElementById("diary-container");
 
-	    
+        const topStatusEl = document.createElement("p");
+        topStatusEl.className = "diary-status";
+        topStatusEl.setAttribute("role", "status");
+        topStatusEl.setAttribute("aria-live", "polite");
+        topStatusEl.textContent = "日記を読み込んでいます…";
+        topSection.appendChild(topStatusEl);
+
+        const diaryStatusEl = document.createElement("p");
+        diaryStatusEl.className = "diary-status";
+        diaryStatusEl.setAttribute("role", "status");
+        diaryStatusEl.setAttribute("aria-live", "polite");
+        diaryStatusEl.textContent = "日記を読み込んでいます…";
+        diarySection.insertBefore(diaryStatusEl, diaryContainer);
+
+        fetch('diary.json')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(diaryData => {
+            if (!Array.isArray(diaryData) || diaryData.length === 0) {
+              showEmptyState();
+              return;
+            }
+
+            diaryData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            renderLatest(diaryData[0]);
+            renderDiaryList(diaryData);
+
+            topStatusEl.remove();
+            diaryStatusEl.remove();
+          })
+          .catch(error => {
+            console.error('Failed to load diary entries', error);
+            showErrorState();
+          });
+
+        function renderLatest(latest) {
+          latestDateEl.textContent = latest.date;
+          latestCommentEl.textContent = latest.comment;
+          latestImageEl.src = latest.image;
+          latestImageEl.alt = latest.comment;
+          latestImageEl.style.display = '';
+        }
+
+        function renderDiaryList(diaryData) {
+          diaryContainer.innerHTML = '';
+          diaryData.forEach(entry => {
+            const div = document.createElement("div");
+            div.className = "entry";
+            div.innerHTML = `
+              <div class="entry-date">${entry.date}</div>
+              <div>${entry.comment}</div>
+              <img src="${entry.image}" alt="${entry.comment}">
+            `;
+            diaryContainer.appendChild(div);
+          });
+        }
+
+        function showEmptyState() {
+          const message = "まだ日記がありません。";
+          latestDateEl.textContent = "-";
+          latestCommentEl.textContent = message;
+          latestImageEl.removeAttribute('src');
+          latestImageEl.alt = "日記がありません";
+          latestImageEl.style.display = 'none';
+
+          topStatusEl.textContent = message;
+          topStatusEl.className = "diary-status";
+
+          diaryStatusEl.textContent = message;
+          diaryStatusEl.className = "diary-status";
+          diaryContainer.innerHTML = '';
+        }
+
+        function showErrorState() {
+          const message = "日記を読み込めませんでした。時間をおいて再度お試しください。";
+          latestDateEl.textContent = "-";
+          latestCommentEl.textContent = message;
+          latestImageEl.removeAttribute('src');
+          latestImageEl.alt = message;
+          latestImageEl.style.display = 'none';
+
+          topStatusEl.textContent = message;
+          topStatusEl.className = "diary-error";
+
+          diaryStatusEl.textContent = message;
+          diaryStatusEl.className = "diary-error";
+          diaryContainer.innerHTML = '';
+        }
+
         function showTab(tabId) {
             document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
 
-		fetch('diary.json')
-		  .then(response => response.json())
-		  .then(diaryData => {
-		    diaryData.sort((a, b) => new Date(b.date) - new Date(a.date));
-		    const container = document.getElementById("diary-container");
-		    diaryData.forEach(entry => {
-		      const div = document.createElement("div");
-		      div.className = "entry";
-		      div.innerHTML = `
-		        <div class="entry-date">${entry.date}</div>
-		        <div>${entry.comment}</div>
-		        <img src="${entry.image}" alt="日記画像">
-		      `;
-		      container.appendChild(div);
-		    });
-		  });
+        function redirectAfterSubmit(form) {
+            // 少し遅らせて送信後にリダイレクト
+            setTimeout(() => {
+              window.location.href = "thanks.html";
+            }, 100); // 0.1秒で十分（送信処理が先に走る）
 
-	  function redirectAfterSubmit(form) {
-	    // 少し遅らせて送信後にリダイレクト
-	    setTimeout(() => {
-	      window.location.href = "thanks.html";
-	    }, 100); // 0.1秒で十分（送信処理が先に走る）
-	
-	    return true; // 本来の送信処理も実行
-	  }
-	    
+            return true; // 本来の送信処理も実行
+          }
+
     </script>
 </body>
 </html>
