@@ -79,7 +79,25 @@ body {
     font-weight: bold;
     color: #337799;
   }
-  
+
+
+.diary-status,
+.diary-error {
+    text-align: center;
+    margin: 1.5em auto 0;
+    max-width: 36em;
+}
+
+.diary-status {
+    color: #337799;
+    font-weight: 500;
+}
+
+.diary-error {
+    color: #c0392b;
+    font-weight: 600;
+}
+
 
 /* 入力フォームの整列 */
 form {
